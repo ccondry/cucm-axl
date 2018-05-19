@@ -17,6 +17,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "dotenv": "^5.0.1",
+    "js2xmlparser": "^3.0.0",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
