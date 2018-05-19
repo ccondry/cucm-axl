@@ -1,10 +1,20 @@
 const expect = require('chai').expect
-const axl = require('../index')
-const parseXmlString = require('../parse-xml')
+const cucmAxl = require('../index')
 
+// create axl connection object
+const axl = new cucmAxl({
+  host: 'cucm1.dcloud.cisco.com',
+  user: 'axluser',
+  pass: 'C1sco12345',
+  version: '11.5'
+})
+
+// holds line uuid so that it can be used in device creation
 let lineUuid
-// let deviceUuid = 'A14152DC-D631-DC9D-F375-203017B03D26'.toLowerCase()
+// holds device uuid so that it can be used in remote destination creation
 let deviceUuid
+// name of your route partition for creating devices and lines
+// use empty string to represent the <None> value
 let routePartitionName = ''
 
 describe('getApplicationUserUuid()', function () {

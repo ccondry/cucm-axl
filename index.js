@@ -1,117 +1,125 @@
 const axios = require('axios')
 const parseXmlString = require('./parse-xml')
 const js2xmlparser = require('js2xmlparser')
-// load environment file
-require('dotenv').load()
 
+// capitalize the first letter of a string and return it
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-async function run (method, type, innerBody) {
-  const methodType = method + capitalizeFirstLetter(type)
-  const url = `https://${process.env.AXL_HOST}:8443/axl/`
-  const basicAuth = new Buffer(process.env.AXL_USER + ':' + process.env.AXL_PASS).toString('base64')
-  const headers = {
-    'Authorization': `Basic ${basicAuth}`,
-    'Content-Type': 'text/xml',
-    'SOAPAction': `CUCM:DB ver=${process.env.AXL_VERSION} ${methodType}`
+class Axl {
+  constructor(settings) {
+    this.host = settings.host
+    this.user = settings.user
+    this.pass = settings.pass
+    this.version = settings.version
+
+    this.js2xmlOptions = {
+      attributeString: '$',
+      declaration: {
+        include: false
+      }
+    }
   }
-  const body = `<soapenv:Envelope
-  xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <soapenv:Body>
-  <axl:${methodType} xmlns:axl="http://www.cisco.com/AXL/API/${process.env.AXL_VERSION}">
-  ${innerBody}
-  </axl:${methodType}>
-  </soapenv:Body>
-  </soapenv:Envelope>`
 
-  try {
-    // POST request to CUCM
-    const res = await axios.post(url, body, {headers})
-    // parse XML to JSON
-    const json = await parseXmlString(res.data)
-    // extract and return relevant response data
-    const nsResponse = json['soapenv:Envelope']['soapenv:Body'][`ns:${methodType}Response`]
-    return nsResponse['return'][type] || nsResponse['return']
-  } catch (e) {
-    const json = await parseXmlString(e.response.data)
-    throw json['soapenv:Envelope']['soapenv:Body']['soapenv:Fault']['faultstring']
+  /*** main AXL command runner ***/
+  async run (method, type, innerBody) {
+    const methodType = method + capitalizeFirstLetter(type)
+    const url = `https://${this.host}:8443/axl/`
+    const basicAuth = new Buffer(this.user + ':' + this.pass).toString('base64')
+    const headers = {
+      'Authorization': `Basic ${basicAuth}`,
+      'Content-Type': 'text/xml',
+      'SOAPAction': `CUCM:DB ver=${this.version} ${methodType}`
+    }
+    const body = `<soapenv:Envelope
+    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <soapenv:Body>
+    <axl:${methodType} xmlns:axl="http://www.cisco.com/AXL/API/${this.version}">
+    ${innerBody}
+    </axl:${methodType}>
+    </soapenv:Body>
+    </soapenv:Envelope>`
+
+    try {
+      // POST request to CUCM
+      const res = await axios.post(url, body, {headers})
+      // parse XML to JSON
+      const json = await parseXmlString(res.data)
+      // extract and return relevant response data
+      const nsResponse = json['soapenv:Envelope']['soapenv:Body'][`ns:${methodType}Response`]
+      return nsResponse['return'][type] || nsResponse['return']
+    } catch (e) {
+      try {
+        // try to parse the xml error
+        const json = await parseXmlString(e.response.data)
+        throw json['soapenv:Envelope']['soapenv:Body']['soapenv:Fault']['faultstring']
+      } catch (e2) {
+        // if parsing fails, just throw the original error
+        throw e
+      }
+    }
   }
-}
-//
-// go('get', 'line', '<pattern>41377</pattern>').then(res => {
-//   console.log(res)
-// }).catch(e => {
-//   console.log(e)
-// })
 
-
-// run('list', 'line', '<searchCriteria><pattern>4%377</pattern></searchCriteria><returnedTags><description/></returnedTags>').then(res => {
-//   console.log(res)
-// }).catch(e => {
-//   console.log(e)
-// })
-
-const js2xmlOptions = {
-  attributeString: '$',
-  declaration: {
-    include: false
-  }
-}
-
-module.exports = {
-  run,
-  addLine: function (details) {
+  /*** functions to add items  ***/
+  addLine (details) {
     // add all specified details
-    const innerBody = js2xmlparser.parse('line', details, js2xmlOptions)
+    const innerBody = js2xmlparser.parse('line', details, this.js2xmlOptions)
     // run command
-    return run('add', 'line', innerBody)
-  },
-  addPhone: function (details) {
+    return this.run('add', 'line', innerBody)
+  }
+
+  addPhone (details) {
     // add all specified phone details
-    const innerBody = js2xmlparser.parse('phone', details, js2xmlOptions)
+    const innerBody = js2xmlparser.parse('phone', details, this.js2xmlOptions)
     // run command
-    return run('add', 'phone', innerBody)
-  },
-  addRemoteDestination: function (details) {
+    return this.run('add', 'phone', innerBody)
+  }
+
+  addRemoteDestination (details) {
     // add all specified phone details
-    const innerBody = js2xmlparser.parse('remoteDestination', details, js2xmlOptions)
+    const innerBody = js2xmlparser.parse('remoteDestination', details, this.js2xmlOptions)
     // run command
-    return run('add', 'remoteDestination', innerBody)
-  },
-  getLine: function (searchCriteria) {
+    return this.run('add', 'remoteDestination', innerBody)
+  }
+
+  /*** functions to get items  ***/
+  getLine (searchCriteria) {
     // iterate over searchCriteria and add each to the inner body
     let innerBody = ''
     for (let key in searchCriteria) {
       innerBody += `<${key}>${searchCriteria[key]}</${key}>`
     }
     // run command
-    return run('get', 'line', innerBody)
-  },
-  getPhone: function (searchCriteria) {
+    return this.run('get', 'line', innerBody)
+  }
+
+  getPhone (searchCriteria) {
     // iterate over searchCriteria and add each to the inner body
     let innerBody = ''
     for (let key in searchCriteria) {
       innerBody += `<${key}>${searchCriteria[key]}</${key}>`
     }
-    // const innerBody = js2xmlparser.parse('phone', details, js2xmlOptions)
+    // const innerBody = js2xmlparser.parse('phone', details, this.js2xmlOptions)
     // run command
-    return run('get', 'phone', innerBody)
-  },
-  getRemoteDestination: function (searchCriteria) {
+    return this.run('get', 'phone', innerBody)
+  }
+
+  getRemoteDestination (searchCriteria) {
     // create XML
-    // const innerBody = js2xmlparser.parse('phone', details, js2xmlOptions)
+    // const innerBody = js2xmlparser.parse('phone', details, this.js2xmlOptions)
     let innerBody = ''
     for (let key in searchCriteria) {
       innerBody += `<${key}>${searchCriteria[key]}</${key}>`
     }
     // run command
-    return run('get', 'remoteDestination', innerBody)
-  },
-  listLine: function (searchCriteria, returnedTags) {
+    return this.run('get', 'remoteDestination', innerBody)
+  }
+
+  /*** functions to list items  ***/
+  listLine (searchCriteria, returnedTags) {
     // add all specified search criteria
     let innerBody = '<searchCriteria>'
     for (let key in searchCriteria) {
@@ -126,50 +134,61 @@ module.exports = {
     }
     innerBody += '</returnedTags>'
     // run command
-    return run('list', 'line', innerBody)
-  },
-  removeLine: function (details) {
+    return this.run('list', 'line', innerBody)
+  }
+
+  removeLine (details) {
     // add all specified phone details
     let innerBody = ''
     for (let key in details) {
       innerBody += `<${key}>${details[key]}</${key}>`
     }
     // run command
-    return run('remove', 'line', innerBody)
-  },
-  removePhone: function (details) {
+    return this.run('remove', 'line', innerBody)
+  }
+
+  removePhone (details) {
     // add all specified phone details
     let innerBody = ''
     for (let key in details) {
       innerBody += `<${key}>${details[key]}</${key}>`
     }
     // run command
-    return run('remove', 'phone', innerBody)
-  },
-  removeRemoteDestination: function (details) {
+    return this.run('remove', 'phone', innerBody)
+  }
+
+  /*** functions to remove items  ***/
+  removeRemoteDestination (details) {
     // add all specified phone details
     let innerBody = ''
     for (let key in details) {
       innerBody += `<${key}>${details[key]}</${key}>`
     }
     // run command
-    return run('remove', 'remoteDestination', innerBody)
-  },
-  associateDeviceWithApplicationUser: function (deviceUuid, appUserName) {
-    let query = `INSERT INTO applicationuserdevicemap (fkapplicationuser, fkdevice, tkuserassociation) VALUES ( (SELECT pkid from applicationuser WHERE name = '${appUserName}'), '${deviceUuid}', 1)`
-    let innerBody = `<sql>${query}</sql>`
-    // run command
-    return run('execute', 'SQLUpdate', innerBody)
-  },
-  getApplicationUserDeviceAssociations: function (name) {
+    return this.run('remove', 'remoteDestination', innerBody)
+  }
+
+  getApplicationUserDeviceAssociations (name) {
     let query = `SELECT * FROM applicationuserdevicemap
     WHERE fkapplicationuser = (SELECT pkid from applicationuser WHERE name = '${name}')`
     let innerBody = `<sql>${query}</sql>`
-    return run('execute', 'SQLQuery', innerBody)
-  },
-  getApplicationUserUuid: function (name) {
+    return this.run('execute', 'SQLQuery', innerBody)
+  }
+
+  getApplicationUserUuid (name) {
     let query = `SELECT pkid from applicationuser WHERE name = '${name}'`
     let innerBody = `<sql>${query}</sql>`
-    return run('execute', 'SQLQuery', innerBody)
+    return this.run('execute', 'SQLQuery', innerBody)
   }
+
+  /*** other functions ***/
+  associateDeviceWithApplicationUser (deviceUuid, appUserName) {
+    let query = `INSERT INTO applicationuserdevicemap (fkapplicationuser, fkdevice, tkuserassociation) VALUES ( (SELECT pkid from applicationuser WHERE name = '${appUserName}'), '${deviceUuid}', 1)`
+    let innerBody = `<sql>${query}</sql>`
+    // run command
+    return this.run('execute', 'SQLUpdate', innerBody)
+  }
+
 }
+
+module.exports = Axl
