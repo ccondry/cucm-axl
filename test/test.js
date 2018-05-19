@@ -81,7 +81,9 @@ describe('addPhone()', function () {
             enduser: {
               userId: 'ccondry'
             }
-          }]
+          }],
+          maxNumcalls: 2,
+          busyTrigger: 1
         }
       }]
 
