@@ -28,8 +28,8 @@ describe('getLine()', function () {
       routePartitionName: 'Everyone'
     })
     .then(results => {
-      // console.log(results['$'].uuid)
-      console.log(results)
+      console.log(results['$'].uuid)
+      // console.log(results)
       done()
     }).catch(e => done(e))
   })
@@ -45,7 +45,7 @@ describe('listLine()', function () {
       'description'
     ])
     .then(lines => {
-      console.log(lines)
+      console.log(`found ${lines.length} lines`)
       done()
     }).catch(e => done(e))
   })
