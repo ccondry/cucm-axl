@@ -66,19 +66,13 @@ module.exports = {
   run,
   addLine: function (details) {
     // add all specified details
-    let innerBody = '<line>'
-    for (let key in details) {
-      innerBody += `<${key}>${details[key]}</${key}>`
-    }
-    innerBody += '</line>'
-
+    const innerBody = js2xmlparser.parse('line', details, js2xmlOptions)
     // run command
     return run('add', 'line', innerBody)
   },
   addPhone: function (details) {
     // add all specified phone details
     const innerBody = js2xmlparser.parse('phone', details, js2xmlOptions)
-    // console.log(innerBody)
     // run command
     return run('add', 'phone', innerBody)
   },
