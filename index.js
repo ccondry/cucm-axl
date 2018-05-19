@@ -140,7 +140,6 @@ module.exports = {
     for (let key in details) {
       innerBody += `<${key}>${details[key]}</${key}>`
     }
-    // console.log(innerBody)
     // run command
     return run('remove', 'line', innerBody)
   },
@@ -150,7 +149,6 @@ module.exports = {
     for (let key in details) {
       innerBody += `<${key}>${details[key]}</${key}>`
     }
-    // console.log(innerBody)
     // run command
     return run('remove', 'phone', innerBody)
   },
@@ -160,8 +158,24 @@ module.exports = {
     for (let key in details) {
       innerBody += `<${key}>${details[key]}</${key}>`
     }
-    // console.log(innerBody)
     // run command
     return run('remove', 'remoteDestination', innerBody)
+  },
+  associateDeviceWithApplicationUser: function (deviceUuid, appUserName) {
+    let query = `INSERT INTO applicationuserdevicemap (fkapplicationuser, fkdevice, tkuserassociation) VALUES ( (SELECT pkid from applicationuser WHERE name = '${appUserName}'), '${deviceUuid}', 1)`
+    let innerBody = `<sql>${query}</sql>`
+    // run command
+    return run('execute', 'SQLUpdate', innerBody)
+  },
+  getApplicationUserDeviceAssociations: function (name) {
+    let query = `SELECT * FROM applicationuserdevicemap
+    WHERE fkapplicationuser = (SELECT pkid from applicationuser WHERE name = '${name}')`
+    let innerBody = `<sql>${query}</sql>`
+    return run('execute', 'SQLQuery', innerBody)
+  },
+  getApplicationUserUuid: function (name) {
+    let query = `SELECT pkid from applicationuser WHERE name = '${name}'`
+    let innerBody = `<sql>${query}</sql>`
+    return run('execute', 'SQLQuery', innerBody)
   }
 }
