@@ -3,6 +3,29 @@ const axl = require('../index')
 const parseXmlString = require('../parse-xml')
 
 let lineUuid
+// let deviceUuid = 'A14152DC-D631-DC9D-F375-203017B03D26'.toLowerCase()
+let deviceUuid
+let routePartitionName = ''
+
+describe('getApplicationUserUuid()', function () {
+  it('should show uuid for application user PG_USER', function (done) {
+    axl.getApplicationUserUuid('PG_USER')
+    .then(results => {
+      console.log(results.row.pkid)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
+describe('getApplicationUserDeviceAssociations()', function () {
+  it('should list device associations for application user PG_USER', function (done) {
+    axl.getApplicationUserDeviceAssociations('PG_USER')
+    .then(results => {
+      console.log('associated devices:', results.row.length)
+      done()
+    }).catch(e => done(e))
+  })
+})
 
 describe('addLine()', function () {
   it('should add line 49377', function (done) {
@@ -11,7 +34,8 @@ describe('addLine()', function () {
       description: 'ccondry virtual extension',
       alertingName: 'Coty Condry',
       asciiAlertingName: 'Coty Condry',
-      routePartitionName: 'Everyone'
+      routePartitionName
+      // routePartitionName: 'Everyone'
     })
     .then(results => {
       console.log(results)
@@ -25,7 +49,8 @@ describe('getLine()', function () {
   it('should return line details for 49377', function (done) {
     axl.getLine({
       pattern: '49377',
-      routePartitionName: 'Everyone'
+      routePartitionName
+      // routePartitionName: 'Everyone'
     })
     .then(results => {
       console.log(results['$'].uuid)
@@ -39,13 +64,14 @@ describe('listLine()', function () {
   it('should return list of lines matching 4%377', function (done) {
     axl.listLine({
       pattern: '4%377',
-      routePartitionName: 'Everyone'
+      routePartitionName
+      // routePartitionName: 'Everyone'
     }, [
       'pattern',
       'description'
     ])
     .then(lines => {
-      console.log(`found ${lines.length} lines`)
+      console.log(`found lines:`, lines.length)
       done()
     }).catch(e => done(e))
   })
@@ -68,6 +94,7 @@ describe('addPhone()', function () {
       ownerUserName: 'ccondry',
       presenceGroupName: 'Standard Presence group',
       callingSearchSpaceName: 'Call_Everyone',
+      rerouteCallingSearchSpaceName: 'Call_Everyone',
       enableCallRoutingToRdWhenNoneIsActive: 'true',
       lines: [{
         line: {
@@ -90,6 +117,7 @@ describe('addPhone()', function () {
     })
     .then(results => {
       console.log(results)
+      deviceUuid = results.slice(1, results.length - 1)
       done()
     }).catch(e => {
       done(e)
@@ -153,6 +181,16 @@ describe('getRemoteDestination()', function () {
   })
 })
 
+describe('associateDeviceWithApplicationUser()', function () {
+  it('should associate device 49377 with application user PG_USER', function (done) {
+    axl.associateDeviceWithApplicationUser(deviceUuid.toLowerCase(), 'PG_USER')
+    .then(results => {
+      console.log('rows updated:', results.rowsUpdated)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
 describe('removeRemoteDestination()', function () {
   it('should remove remote destination 4449377', function (done) {
     axl.removeRemoteDestination({
@@ -165,7 +203,6 @@ describe('removeRemoteDestination()', function () {
     }).catch(e => done(e))
   })
 })
-
 
 describe('removePhone()', function () {
   it('should remove phone CTIRD9377', function (done) {
@@ -181,7 +218,8 @@ describe('removeLine()', function () {
   it('should remove line 49377', function (done) {
     axl.removeLine({
       pattern: '49377',
-      routePartitionName: 'Everyone'
+      routePartitionName
+      // routePartitionName: 'Everyone'
     })
     .then(results => {
       console.log(results)
