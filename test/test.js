@@ -13,7 +13,7 @@ describe('getLine()', function () {
 
 describe('listLine()', function () {
   it('should return list of lines matching criteria', function (done) {
-    axl.listLine({pattern: '4%377'}, ['description'])
+    axl.listLine({pattern: '4%377'}, ['pattern', 'description'])
     .then(lines => {
       console.log(lines)
       done()
