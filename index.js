@@ -52,14 +52,18 @@ class Axl {
       const nsResponse = json['soapenv:Envelope']['soapenv:Body'][`ns:${methodType}Response`]
       return nsResponse['return'][type] || nsResponse['return']
     } catch (e) {
+      let errorMessage
       try {
         // try to parse the xml error
         const json = await parseXmlString(e.response.data)
-        throw json['soapenv:Envelope']['soapenv:Body']['soapenv:Fault']['faultstring']
+        errorMessage = json['soapenv:Envelope']['soapenv:Body']['soapenv:Fault']['faultstring']
       } catch (e2) {
+        // console.log(e2)
+        errorMessage = e2
         // if parsing fails, just throw the original error
-        throw e
+        // throw e
       }
+      throw errorMessage
     }
   }
 
