@@ -72,7 +72,7 @@ describe('getLine()', function () {
 
 describe('listLine()', function () {
   it('should return list of lines matching 4%377', function (done) {
-    axl.listLine({
+    axl.listLines({
       pattern: '4%377',
       routePartitionName
       // routePartitionName: 'Everyone'
@@ -80,8 +80,8 @@ describe('listLine()', function () {
       'pattern',
       'description'
     ])
-    .then(lines => {
-      console.log(`found lines:`, lines.length)
+    .then(results => {
+      console.log(`found lines:`, results.length)
       done()
     }).catch(e => done(e))
   })

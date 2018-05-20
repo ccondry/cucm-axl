@@ -124,7 +124,7 @@ class Axl {
   }
 
   /*** functions to list items  ***/
-  listLine (searchCriteria, returnedTags) {
+  listLines (searchCriteria, returnedTags) {
     // add all specified search criteria
     let innerBody = '<searchCriteria>'
     for (let key in searchCriteria) {
@@ -181,7 +181,6 @@ class Axl {
     return this.run('remove', 'phone', innerBody)
   }
 
-  /*** functions to remove items  ***/
   removeRemoteDestination (details) {
     // add all specified phone details
     let innerBody = ''
