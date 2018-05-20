@@ -145,6 +145,22 @@ describe('getPhone()', function () {
   })
 })
 
+describe('listPhones()', function () {
+  it('should return list of phones matching CTIRD9377', function (done) {
+    axl.listLines({
+      name: 'CTIRD9377',
+      routePartitionName
+    }, [
+      'name',
+      'description'
+    ])
+    .then(results => {
+      console.log(`found phones:`, results.length)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
 describe('addRemoteDestination()', function () {
   it('should create remote destination 4449377 on CTIRD9377', function (done) {
     axl.addRemoteDestination({

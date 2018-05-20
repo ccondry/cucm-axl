@@ -142,6 +142,25 @@ class Axl {
     return this.run('list', 'line', innerBody)
   }
 
+  listPhones (searchCriteria, returnedTags) {
+    // add all specified search criteria
+    let innerBody = '<searchCriteria>'
+    for (let key in searchCriteria) {
+      innerBody += `<${key}>${searchCriteria[key]}</${key}>`
+    }
+    innerBody += '</searchCriteria>'
+
+    // add all specified returnedTags
+    innerBody += '<returnedTags>'
+    for (let key in returnedTags) {
+      innerBody += `<${returnedTags[key]}/>`
+    }
+    innerBody += '</returnedTags>'
+    // run command
+    return this.run('list', 'phone', innerBody)
+  }
+
+  /*** functions to remove items  ***/
   removeLine (details) {
     // add all specified phone details
     let innerBody = ''
