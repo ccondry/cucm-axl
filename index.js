@@ -44,6 +44,7 @@ class Axl {
     </soapenv:Envelope>`
 
     try {
+      console.log(`running cucm-axl request - ${method} ${type}`)
       // POST request to CUCM
       const res = await axios.post(url, body, {headers})
       // parse XML to JSON
