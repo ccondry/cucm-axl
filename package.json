@@ -4,8 +4,7 @@
   "description": "JavaScript library for Cisco CUCM AXL",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_TLS_REJECT_UNAUTHORIZED=0 mocha",
-    "start": "NODE_TLS_REJECT_UNAUTHORIZED=0 node index"
+    "test": "NODE_TLS_REJECT_UNAUTHORIZED=0 mocha"
   },
   "keywords": [
     "cucm",
