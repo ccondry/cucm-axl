@@ -6,6 +6,10 @@
   "scripts": {
     "test": "NODE_TLS_REJECT_UNAUTHORIZED=0 mocha"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/ccondry/cucm-axl.git"
+  },
   "keywords": [
     "cucm",
     "cisco",
