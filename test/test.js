@@ -147,9 +147,8 @@ describe('getPhone()', function () {
 
 describe('listPhones()', function () {
   it('should return list of phones matching CTIRD9377', function (done) {
-    axl.listLines({
-      name: 'CTIRD9377',
-      routePartitionName
+    axl.listPhones({
+      name: 'CTIRD9377'
     }, [
       'name',
       'description'
