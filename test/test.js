@@ -201,6 +201,16 @@ describe('associateDeviceWithApplicationUser()', function () {
   })
 })
 
+describe('associateDeviceWithEndUser()', function () {
+  it('should associate device 49377 with end user ccondry', function (done) {
+    axl.associateDeviceWithEndUser(deviceUuid.toLowerCase(), 'ccondry')
+    .then(results => {
+      console.log('rows updated:', results.rowsUpdated)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
 describe('removeRemoteDestination()', function () {
   it('should remove remote destination 4449377', function (done) {
     axl.removeRemoteDestination({

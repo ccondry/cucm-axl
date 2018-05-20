@@ -194,6 +194,13 @@ class Axl {
     return this.run('execute', 'SQLUpdate', innerBody)
   }
 
+  associateDeviceWithEndUser (deviceUuid, username) {
+    let query = `INSERT INTO enduserdevicemap (fkenduser, fkdevice, tkuserassociation) VALUES ( (SELECT pkid from enduser WHERE userid = '${username}'), '${deviceUuid}', 1)`
+    let innerBody = `<sql>${query}</sql>`
+    // run command
+    return this.run('execute', 'SQLUpdate', innerBody)
+  }
+
 }
 
 module.exports = Axl
