@@ -1,8 +1,5 @@
 const xml2js = require('xml2js')
 
-// load environment file
-require('dotenv').load()
-
 function parseString (string) {
   return new Promise(function(resolve, reject)
   {
