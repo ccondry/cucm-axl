@@ -21,7 +21,7 @@ describe('getApplicationUserUuid()', function () {
   it('should show uuid for application user PG_USER', function (done) {
     axl.getApplicationUserUuid('PG_USER')
     .then(results => {
-      console.log(results.row.pkid)
+      console.log(results.pkid)
       done()
     }).catch(e => done(e))
   })
@@ -31,7 +31,7 @@ describe('getApplicationUserDeviceAssociations()', function () {
   it('should list device associations for application user PG_USER', function (done) {
     axl.getApplicationUserDeviceAssociations('PG_USER')
     .then(results => {
-      console.log('associated devices:', results.row.length)
+      console.log('associated devices:', results.length)
       done()
     }).catch(e => done(e))
   })
@@ -63,7 +63,7 @@ describe('getLine()', function () {
       // routePartitionName: 'Everyone'
     })
     .then(results => {
-      console.log(results['$'].uuid)
+      console.log(results['$'])
       // console.log(results)
       done()
     }).catch(e => done(e))
@@ -139,22 +139,32 @@ describe('getPhone()', function () {
   it('should return phone details for CTIRD9377', function (done) {
     axl.getPhone({name: 'CTIRD9377'})
     .then(results => {
-      console.log(results.name)
+      console.log(results['$'])
       done()
     }).catch(e => done(e))
   })
 })
 
 describe('listPhones()', function () {
-  it('should return list of phones matching CTIRD9377', function (done) {
+  it('should return list of phones', function (done) {
     axl.listPhones({
-      name: 'CTIRD9377'
+      name: 'CTIRD%'
     }, [
       'name',
       'description'
     ])
     .then(results => {
       console.log(`found phones:`, results.length)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
+describe('listDevicesAndDns()', function () {
+  it('should return list of devices and their DNs', function (done) {
+    axl.listDevicesAndDns('4%377')
+    .then(results => {
+      console.log(`found phones:`, results)
       done()
     }).catch(e => done(e))
   })

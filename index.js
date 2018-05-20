@@ -51,7 +51,8 @@ class Axl {
       const json = await parseXmlString(res.data)
       // extract and return relevant response data
       const nsResponse = json['soapenv:Envelope']['soapenv:Body'][`ns:${methodType}Response`]
-      return nsResponse['return'][type] || nsResponse['return']
+      // return nsResponse['return'][type] || nsResponse['return']
+      return nsResponse['return']['row'] || nsResponse['return'][type] || nsResponse['return']
     } catch (e) {
       let errorMessage
       try {
@@ -194,31 +195,44 @@ class Axl {
   getApplicationUserDeviceAssociations (name) {
     let query = `SELECT * FROM applicationuserdevicemap
     WHERE fkapplicationuser = (SELECT pkid from applicationuser WHERE name = '${name}')`
-    let innerBody = `<sql>${query}</sql>`
-    return this.run('execute', 'SQLQuery', innerBody)
+    return this.sqlQuery(query)
   }
 
   getApplicationUserUuid (name) {
     let query = `SELECT pkid from applicationuser WHERE name = '${name}'`
-    let innerBody = `<sql>${query}</sql>`
-    return this.run('execute', 'SQLQuery', innerBody)
+    return this.sqlQuery(query)
   }
 
   /*** other functions ***/
   associateDeviceWithApplicationUser (deviceUuid, appUserName) {
     let query = `INSERT INTO applicationuserdevicemap (fkapplicationuser, fkdevice, tkuserassociation) VALUES ( (SELECT pkid from applicationuser WHERE name = '${appUserName}'), '${deviceUuid}', 1)`
-    let innerBody = `<sql>${query}</sql>`
-    // run command
-    return this.run('execute', 'SQLUpdate', innerBody)
+    return this.sqlUpdate(query)
   }
 
   associateDeviceWithEndUser (deviceUuid, username) {
     let query = `INSERT INTO enduserdevicemap (fkenduser, fkdevice, tkuserassociation) VALUES ( (SELECT pkid from enduser WHERE userid = '${username}'), '${deviceUuid}', 1)`
-    let innerBody = `<sql>${query}</sql>`
-    // run command
-    return this.run('execute', 'SQLUpdate', innerBody)
+    return this.sqlUpdate(query)
   }
 
+  listDevicesAndDns (pattern) {
+    let query = `SELECT d.name, d.description, t.name model, n.dnorpattern dialed_number, n.tkautoanswer auto_answer
+    FROM numplan n
+    JOIN devicenumplanmap map ON map.fknumplan = n.pkid
+    JOIN device d ON map.fkdevice = d.pkid
+    JOIN typemodel t ON d.tkmodel = t.enum
+    WHERE dnorpattern LIKE '${pattern}'`
+    return this.sqlQuery(query)
+  }
+
+  sqlQuery (query) {
+    let innerBody = `<sql>${query}</sql>`
+    return this.run('execute', 'SQLQuery', innerBody)
+  }
+
+  sqlUpdate (query) {
+    let innerBody = `<sql>${query}</sql>`
+    return this.run('execute', 'SQLUpdate', innerBody)
+  }
 }
 
 module.exports = Axl
