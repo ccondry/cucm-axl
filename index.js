@@ -241,6 +241,14 @@ class Axl {
     // run command
     return this.run('do', 'ldapSync', innerBody)
   }
+
+  // get status of CUCM LDAP directory sync using name provided in parameter
+  getLdapSyncStatus (name) {
+    // build inner body
+    const innerBody = `<name>${name}</name>`
+    // run command
+    return this.run('get', 'ldapSyncStatus', innerBody)
+  }
 }
 
 module.exports = Axl
