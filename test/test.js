@@ -97,14 +97,14 @@ describe('addPhone()', function () {
       class: 'Phone',
       protocol: 'CTI Remote Device',
       protocolSide: 'User',
-      devicePoolName: 'dCloud_DP',
+      devicePoolName: process.env.DEVICE_POOL,
       commonPhoneConfigName: 'Standard Common Phone Profile',
       locationName: 'Hub_None',
       useDevicePoolCgpnTransformCss: 'true',
       ownerUserName: 'ccondry',
       presenceGroupName: 'Standard Presence group',
-      callingSearchSpaceName: 'Call_Everyone',
-      rerouteCallingSearchSpaceName: 'Call_Everyone',
+      callingSearchSpaceName: process.env.CALLING_SEARCH_SPACE,
+      rerouteCallingSearchSpaceName: process.env.CALLING_SEARCH_SPACE,
       enableCallRoutingToRdWhenNoneIsActive: 'true',
       lines: [{
         line: {
