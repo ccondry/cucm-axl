@@ -235,8 +235,7 @@ class Axl {
   }
 
   // initiate a sync of the CUCM LDAP directory using name provided in parameter
-  syncLdap (name) {
-    doLdapSync to starting ldap sync and getLdapSyncStatus
+  doLdapSync (name) {
     // build inner body
     const innerBody = `<name>${name}</name>  <sync>true</sync>`
     // run command
