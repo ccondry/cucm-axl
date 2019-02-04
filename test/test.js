@@ -259,13 +259,19 @@ describe('removePhone()', function () {
   })
 })
 
-describe('removeLine()', function () {
-  it('should remove line 49377', function (done) {
-    axl.removeLine({
-      pattern: '49377',
-      routePartitionName
-      // routePartitionName: 'Everyone'
-    })
+describe('doLdapSync()', function () {
+  it('should start LDAP sync', function (done) {
+    axl.doLdapSync('dcloud AD')
+    .then(results => {
+      console.log(results)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
+describe('getLdapSyncStatus()', function () {
+  it('get LDAP sync status', function (done) {
+    axl.getLdapSyncStatus('dcloud AD')
     .then(results => {
       console.log(results)
       done()
