@@ -233,6 +233,15 @@ class Axl {
     let innerBody = `<sql>${query}</sql>`
     return this.run('execute', 'SQLUpdate', innerBody)
   }
+
+  // initiate a sync of the CUCM LDAP directory using name provided in parameter
+  syncLdap (name) {
+    doLdapSync to starting ldap sync and getLdapSyncStatus
+    // build inner body
+    const innerBody = `<name>${name}</name>  <sync>true</sync>`
+    // run command
+    return this.run('do', 'ldapSync', innerBody)
+  }
 }
 
 module.exports = Axl
