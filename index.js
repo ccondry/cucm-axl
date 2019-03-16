@@ -214,6 +214,15 @@ class Axl {
     return this.sqlUpdate(query)
   }
 
+  getEndUserIpccExtension (username) {
+    let query = `SELECT numplan.dnorpattern, numplan.description, routepartition.name as routepartition FROM numplan
+    JOIN endusernumplanmap ON (endusernumplanmap.fknumplan = numplan.pkid)
+    JOIN routepartition ON (routepartition.pkid = numplan.fkroutepartition)
+    WHERE fkenduser = (SELECT pkid FROM enduser WHERE userid = '${username}')
+    AND tkdnusage = '2'`
+    return this.sqlQuery(query)
+  }
+
   setEndUserIpccExtension (username, extension, routePartition) {
     let query = `INSERT INTO endusernumplanmap (fkenduser, fknumplan, tkdnusage)
     VALUES (

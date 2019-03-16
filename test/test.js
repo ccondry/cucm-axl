@@ -278,3 +278,23 @@ describe('getLdapSyncStatus()', function () {
     }).catch(e => done(e))
   })
 })
+
+describe('getEndUserIpccExtension()', function () {
+  it('setEndUserIpccExtension', function (done) {
+    axl.getEndUserIpccExtension('sjeffers0020')
+    .then(results => {
+      console.log(results)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
+describe('setEndUserIpccExtension()', function () {
+  it('setEndUserIpccExtension', function (done) {
+    axl.setEndUserIpccExtension('sjeffers0020', '10800020', 'dCloud_PT')
+    .then(results => {
+      console.log(results)
+      done()
+    }).catch(e => done(e))
+  })
+})
