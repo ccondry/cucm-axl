@@ -229,8 +229,8 @@ class Axl {
       (SELECT pkid FROM enduser WHERE userid = '${username}'),
       (SELECT numplan.pkid FROM numplan
         JOIN routepartition ON (routepartition.pkid = numplan.fkroutepartition)
-        WHERE numplan.dnorpattern = ${extension}
-        AND routepartition.name = ${routePartition}),
+        WHERE numplan.dnorpattern = '${extension}'
+        AND routepartition.name = '${routePartition}'),
       '2'
     )`
     return this.sqlUpdate(query)
