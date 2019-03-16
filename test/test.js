@@ -280,8 +280,8 @@ describe('getLdapSyncStatus()', function () {
 })
 
 describe('getEndUserIpccExtension()', function () {
-  it('setEndUserIpccExtension', function (done) {
-    axl.getEndUserIpccExtension('sjeffers0020')
+  it('getEndUserIpccExtension', function (done) {
+    axl.getEndUserIpccExtension('jopeters0020')
     .then(results => {
       console.log(results)
       done()
@@ -291,7 +291,17 @@ describe('getEndUserIpccExtension()', function () {
 
 describe('setEndUserIpccExtension()', function () {
   it('setEndUserIpccExtension', function (done) {
-    axl.setEndUserIpccExtension('sjeffers0020', '10800020', 'dCloud_PT')
+    axl.setEndUserIpccExtension('jopeters0020', '10610020', 'dCloud_PT')
+    .then(results => {
+      console.log(results)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
+describe('getEndUserIpccExtension()', function () {
+  it('getEndUserIpccExtension', function (done) {
+    axl.getEndUserIpccExtension('jopeters0020')
     .then(results => {
       console.log(results)
       done()
