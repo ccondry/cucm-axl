@@ -223,7 +223,12 @@ class Axl {
     return this.sqlQuery(query)
   }
 
+  // @deprecated
   setEndUserIpccExtension (username, extension, routePartition) {
+    return insertEndUserIpccExtension(username, extension, routePartition)
+  }
+
+  insertEndUserIpccExtension (username, extension, routePartition) {
     let query = `INSERT INTO endusernumplanmap (fkenduser, fknumplan, tkdnusage)
     VALUES (
       (SELECT pkid FROM enduser WHERE userid = '${username}'),
@@ -233,6 +238,17 @@ class Axl {
         AND routepartition.name = '${routePartition}'),
       '2'
     )`
+    return this.sqlUpdate(query)
+  }
+
+  deleteEndUserIpccExtension (username, extension, routePartition) {
+    let query = `DELETE FROM endusernumplanmap
+    WHERE fkenduser = (SELECT pkid FROM enduser WHERE userid = '${username}')
+    AND fknumplan = (SELECT numplan.pkid FROM numplan
+        JOIN routepartition ON (routepartition.pkid = numplan.fkroutepartition)
+        WHERE numplan.dnorpattern = '${extension}'
+        AND routepartition.name = '${routePartition}')
+    AND tkdnusage = '2'`
     return this.sqlUpdate(query)
   }
 
@@ -270,6 +286,15 @@ class Axl {
     const innerBody = `<name>${name}</name>`
     // run command
     return this.run('get', 'ldapSyncStatus', innerBody)
+  }
+
+  // update end user
+  updateUser (userId, ) {
+    // build inner body
+    const innerBody = `<userid>${userId}</userid>
+    <ipccExtension>${ipccExtension}<ipccExtension>`
+    // run command
+    return this.run('update', 'user', innerBody)
   }
 }
 
