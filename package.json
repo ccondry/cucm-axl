@@ -1,6 +1,6 @@
 {
   "name": "cucm-axl",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "JavaScript library for Cisco CUCM AXL",
   "main": "index.js",
   "scripts": {
