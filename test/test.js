@@ -308,3 +308,44 @@ describe('getEndUserIpccExtension()', function () {
     }).catch(e => done(e))
   })
 })
+
+// get end user
+describe('getUser()', function () {
+  it('getUser', function (done) {
+    axl.getUser({userid: '1320'})
+    .then(results => {
+      console.log(results)
+      // console.log(results['$'].uuid)
+      done()
+    }).catch(e => done(e))
+  })
+})
+
+// create end user
+describe('addUser()', function () {
+  it('addUser', function (done) {
+    const userId = '0325'
+    axl.addUser({
+        lastName: userId,
+        userid: userId,
+        password: 'C1sco12345',
+        enableMobility: 'true',
+        enableMobileVoiceAccess: 'false',
+        maxDeskPickupWaitTime: '10000',
+        remoteDestinationLimit: '4',
+        status: '1',
+        enableEmcc: 'false',
+        homeCluster: 'true',
+        imAndPresenceEnable: 'false',
+        selfService: userId,
+        calendarPresence: 'false',
+        nameDialing: userId,
+        enableUserToHostConferenceNow: 'false'
+      })
+    .then(results => {
+      console.log(results)
+      // console.log(results['$'].uuid)
+      done()
+    }).catch(e => done(e))
+  })
+})

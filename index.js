@@ -296,6 +296,24 @@ class Axl {
     // run command
     return this.run('update', 'user', innerBody)
   }
+
+  // get end user
+  getUser (searchCriteria) {
+    let innerBody = ''
+    for (let key in searchCriteria) {
+      innerBody += `<${key}>${searchCriteria[key]}</${key}>`
+    }
+    // run command
+    return this.run('get', 'user', innerBody)
+  }
+
+  // add end user
+  addUser (details) {
+    // add all specified details
+    const innerBody = js2xmlparser.parse('user', details, this.js2xmlOptions)
+    // run command
+    return this.run('add', 'user', innerBody)
+  }
 }
 
 module.exports = Axl
