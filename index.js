@@ -60,11 +60,10 @@ class Axl {
         const json = await parseXmlString(e.response.data)
         errorMessage = json['soapenv:Envelope']['soapenv:Body']['soapenv:Fault']['faultstring']
       } catch (e2) {
-        // console.log(e2)
-        errorMessage = e2
-        // if parsing fails, just throw the original error
-        // throw e
+        // throw the whole original error message
+        throw e
       }
+      // throw parsed error message
       throw errorMessage
     }
   }
