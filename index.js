@@ -289,7 +289,7 @@ class Axl {
   }
 
   // update end user
-  updateUser (userId, ) {
+  updateUser (userId, ipccExtension) {
     // build inner body
     const innerBody = `<userid>${userId}</userid>
     <ipccExtension>${ipccExtension}<ipccExtension>`
