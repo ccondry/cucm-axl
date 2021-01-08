@@ -56,7 +56,7 @@ class Axl {
         nsResponse = json['soapenv:Envelope']['soapenv:Body'][`ns:${methodType}Response`]
       } catch (e1) {
         // soap
-        nsResponse = json['soap:Envelope']['soap:Body'][`ns:${methodType}Response`]
+        nsResponse = json['soap:Envelope']['soap:Body'][`ns2:${methodType}Response`]
       }
       // return nsResponse['return'][type] || nsResponse['return']
       return nsResponse['return']['row'] || nsResponse['return'][type] || nsResponse['return']
