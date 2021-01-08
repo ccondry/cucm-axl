@@ -50,18 +50,31 @@ class Axl {
       // parse XML to JSON
       const json = await parseXmlString(res.data)
       // extract and return relevant response data
-      const nsResponse = json['soapenv:Envelope']['soapenv:Body'][`ns:${methodType}Response`]
+      let nsResponse
+      try {
+        // soapenv
+        nsResponse = json['soapenv:Envelope']['soapenv:Body'][`ns:${methodType}Response`]
+      } catch (e1) {
+        // soap
+        nsResponse = json['soap:Envelope']['soap:Body'][`ns:${methodType}Response`]
+      }
       // return nsResponse['return'][type] || nsResponse['return']
       return nsResponse['return']['row'] || nsResponse['return'][type] || nsResponse['return']
-    } catch (e) {
+    } catch (e2) {
       let errorMessage
       try {
         // try to parse the xml error
         const json = await parseXmlString(e.response.data)
-        errorMessage = json['soapenv:Envelope']['soapenv:Body']['soapenv:Fault']['faultstring']
-      } catch (e2) {
+        try {
+          // soapenv
+          errorMessage = json['soapenv:Envelope']['soapenv:Body']['soapenv:Fault']['faultstring']
+        } catch (e3) {
+          // soap
+          errorMessage = json['soap:Envelope']['soap:Body']['soap:Fault']['faultstring']
+        }
+      } catch (e4) {
         // throw the whole original error message
-        throw e
+        throw e2
       }
       // throw parsed error message
       throw errorMessage
